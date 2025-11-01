@@ -27,7 +27,7 @@ export class ReviewsService {
         language: string;
         fileName?: string;
         userId: number;
-        customGuidelines?: string; // ← ADD THIS
+        customGuidelines?: string;
     }) {
         const review = await this.prisma.codeReview.create({
             data: {
@@ -38,7 +38,7 @@ export class ReviewsService {
                 fileName: data.fileName,
                 userId: data.userId,
                 status: 'pending',
-                customGuidelines: data.customGuidelines, // ← ADD THIS
+                customGuidelines: data.customGuidelines,
             },
         });
 
