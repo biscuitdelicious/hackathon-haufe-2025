@@ -19,10 +19,16 @@ export class ReviewsService {
         private llmService: LlmService,
     ) { }
 
-    /**
-     * Create a new code review and trigger AI analysis
-     */
-    async create(data: CreateReviewDto) {
+    // Create a new code analysis and trigger AI review
+    async create(data: {
+        title: string;
+        description?: string;
+        code: string;
+        language: string;
+        fileName?: string;
+        userId: number;
+        customGuidelines?: string; // ← ADD THIS
+    }) {
         const review = await this.prisma.codeReview.create({
             data: {
                 title: data.title,
@@ -32,10 +38,10 @@ export class ReviewsService {
                 fileName: data.fileName,
                 userId: data.userId,
                 status: 'pending',
+                customGuidelines: data.customGuidelines, // ← ADD THIS
             },
         });
 
-        // Step 2: Trigger AI analysis in background (don't wait)
         this.analyzeReview(review.id).catch((err) =>
             console.error(`Failed to analyze review ${review.id}:`, err),
         );
@@ -65,6 +71,7 @@ export class ReviewsService {
                 review.code,
                 review.language,
                 review.fileName || undefined,
+                review.customGuidelines || undefined,
             );
 
             // Save analysis summary
@@ -119,6 +126,12 @@ export class ReviewsService {
                         comments: true
                     },
                 },
+                findings: {
+                    select: {
+                        id: true,
+                        severity: true,  // ← This is what the filter needs!
+                    }
+                }
             },
         });
     }

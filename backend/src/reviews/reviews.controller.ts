@@ -32,6 +32,7 @@ export class ReviewsController {
             language: body.language,
             fileName: body.fileName,
             userId: req.user.sub, // From JWT token
+            customGuidelines: body.customGuidelines || '',
         });
     }
 
@@ -89,6 +90,7 @@ export class ReviewsController {
     ) {
         return this.reviewsService.updateFindingStatus(id, status);
     }
+
 
 
 }

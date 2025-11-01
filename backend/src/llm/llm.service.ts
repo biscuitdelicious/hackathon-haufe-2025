@@ -21,7 +21,7 @@ interface LLMCodeAnalysisResult {
 @Injectable()
 export class LlmService {
     private ollama: Ollama
-    private readonly model = 'deepseek-r1:7b';
+    private readonly model = 'codellama:7b'; // Used codellama:7b before
 
 
     constructor() {
@@ -33,17 +33,17 @@ export class LlmService {
         code: string,
         language: string,
         fileName?: string,
+        customGuidelines?: string
     ): Promise<LLMCodeAnalysisResult> {
         console.log(`Analyzing ${fileName || 'code'} with ${this.model}`);
 
-        const prompt = this.createCodeReviewPrompt(code, language, fileName);
+        const prompt = this.createCodeReviewPrompt(code, language, fileName, customGuidelines);
 
         try {
             const response = await this.ollama.generate({
                 model: this.model,
                 prompt: prompt,
                 stream: false,
-                think: true,
                 options: {
                     temperature: .4,
                     num_predict: 2000
@@ -67,7 +67,12 @@ export class LlmService {
         code: string,
         language: string,
         fileName?: string,
+        customGuidelines?: string,
     ): string {
+
+        const guidelinesSection = customGuidelines
+            ? `\n\nCUSTOM CODING GUIDELINES TO ENFORCE:\n${customGuidelines}\n\nPay special attention to these guidelines when reviewing the code.`
+            : '';
         return `You are an expert code reviewer. Analyze this ${language} code and provide a full and detailed review.
         
         ${fileName ? `File: ${fileName}` : ''}

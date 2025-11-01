@@ -124,4 +124,68 @@ export class ReviewDetailsComponent implements OnInit {
         this.selectedCategory = category;
     }
 
+    getCriticalCount(): number {
+        if (!this.review?.findings) return 0;
+        return this.review.findings.filter(f => f.severity === 'asap' || f.severity === 'high').length;
+    }
+
+    copyToClipboard(text: string) {
+        navigator.clipboard.writeText(text).then(() => {
+            // Could add a toast notification here
+            console.log('Copied to clipboard!');
+        });
+    }
+
+    getSeverityBreakdown() {
+        if (!this.review?.findings) return [];
+
+        const total = this.review.findings.length;
+        const severities = ['asap', 'high', 'medium', 'low', 'info'];
+
+        return severities
+            .map(sev => {
+                const count = this.review!.findings!.filter(f => f.severity.toLowerCase() === sev).length;
+                return {
+                    name: sev === 'asap' ? 'ASAP' : sev.charAt(0).toUpperCase() + sev.slice(1),
+                    count,
+                    percentage: (count / total) * 100
+                };
+            })
+            .filter(s => s.count > 0);
+    }
+
+    exportReport() {
+        if (!this.review) return;
+
+        let report = `CODE REVIEW REPORT\n`;
+        report += `===================\n\n`;
+        report += `Title: ${this.review.title}\n`;
+        report += `Language: ${this.review.language}\n`;
+        report += `Date: ${new Date(this.review.createdAt).toLocaleDateString()}\n`;
+        report += `Status: ${this.review.status}\n\n`;
+
+        if (this.review.summaryAnalysis) {
+            report += `SUMMARY\n-------\n${this.review.summaryAnalysis}\n\n`;
+        }
+
+        if (this.review.findings) {
+            report += `FINDINGS (${this.review.findings.length})\n---------\n\n`;
+            this.review.findings.forEach((f, i) => {
+                report += `${i + 1}. [${f.severity.toUpperCase()}] ${f.title}\n`;
+                report += `   Category: ${f.category}\n`;
+                if (f.lineNumber) report += `   Line: ${f.lineNumber}\n`;
+                report += `   ${f.description}\n`;
+                if (f.suggestion) report += `   Fix: ${f.suggestion}\n`;
+                report += `\n`;
+            });
+        }
+
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `code-review-${this.review.id}.txt`;
+        a.click();
+    }
+
 }

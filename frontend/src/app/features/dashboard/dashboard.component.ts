@@ -30,7 +30,8 @@ export class DashboardComponent implements OnInit {
         code: '',
         language: 'javascript',
         fileName: '',
-        description: ''
+        description: '',
+        customGuidelines: ''
     };
     creatingReview = false;
 
@@ -109,16 +110,6 @@ export class DashboardComponent implements OnInit {
         this.showNewReviewModal = true;
     }
 
-    closeNewReviewModal() {
-        this.showNewReviewModal = false;
-        this.newReview = {
-            title: '',
-            code: '',
-            language: 'javascript',
-            fileName: '',
-            description: ''
-        };
-    }
 
     createReview() {
         if (!this.newReview.title || !this.newReview.code) {
@@ -178,4 +169,88 @@ export class DashboardComponent implements OnInit {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     }
+
+    // Add to properties:
+    uploadedFileName = '';
+
+    // Add this method:
+    onFileSelected(event: any) {
+        const file: File = event.target.files[0];
+        if (!file) return;
+
+        // Set filename
+        this.uploadedFileName = file.name;
+        this.newReview.fileName = file.name;
+
+        // Auto-detect language from extension
+        this.newReview.language = this.detectLanguage(file.name);
+
+        // Auto-generate title from filename
+        if (!this.newReview.title) {
+            this.newReview.title = `Review: ${file.name}`;
+        }
+
+        // Read file content
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+            this.newReview.code = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+
+    // Add language detection helper:
+    detectLanguage(filename: string): string {
+        const ext = filename.split('.').pop()?.toLowerCase();
+        const languageMap: { [key: string]: string } = {
+            'js': 'javascript',
+            'jsx': 'javascript',
+            'ts': 'typescript',
+            'tsx': 'typescript',
+            'py': 'python',
+            'java': 'java',
+            'go': 'go',
+            'rs': 'rust',
+            'cpp': 'cpp',
+            'c': 'cpp',
+            'cc': 'cpp',
+            'php': 'php',
+            'rb': 'ruby',
+            'swift': 'swift',
+            'kt': 'kotlin',
+            'cs': 'csharp'
+        };
+        return languageMap[ext || ''] || 'javascript';
+    }
+
+    // Update closeNewReviewModal to reset file state:
+    closeNewReviewModal() {
+        this.showNewReviewModal = false;
+        this.uploadedFileName = ''; // ← ADD THIS
+        this.newReview = {
+            title: '',
+            code: '',
+            language: 'javascript',
+            fileName: '',
+            description: '',
+            customGuidelines: ''
+        };
+    }
+
+    // Add these methods:
+    onDragOver(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    onDrop(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const files = event.dataTransfer?.files;
+        if (files && files.length > 0) {
+            const fakeEvent = { target: { files: [files[0]] } };
+            this.onFileSelected(fakeEvent);
+        }
+    }
+
 }

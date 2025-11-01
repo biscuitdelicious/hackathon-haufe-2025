@@ -42,6 +42,7 @@ model CodeReview {
   
   // Review status
   status      String   @default("pending") // pending, in_progress, completed
+  customGuidelines String?
   
   // AI Analysis results
   summaryAnalysis  String?  // Overall AI summary
