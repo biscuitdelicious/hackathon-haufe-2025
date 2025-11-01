@@ -110,7 +110,7 @@ export class ReviewsService {
     // Get all reviews for an user
     async findByUser(userId: number) {
         return this.prisma.codeReview.findMany({
-            where: { id: userId },
+            where: { userId: userId },
             orderBy: { createdAt: 'desc' },
             include: {
                 _count: {
