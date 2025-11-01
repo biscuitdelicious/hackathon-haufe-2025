@@ -7,13 +7,111 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// User authentication
 model Staff {
   id        Int      @id @default(autoincrement())
   username  String   @unique
-  password  String   
+  password  String
   email     String?
   name      String
   role_id   Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  totalReviews      Int     @default(0)
+  averageScore      Float?
+  lastReviewDate    DateTime?
+  improvementStreak Int     @default(0) // Days of consecutive improvement
+  
+ 
+  reviews   CodeReview[] 
+  comments  ReviewComment[]
+  engagements UserEngagement[]
+}
+
+// A code review session
+model CodeReview {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  
+
+  // The code being reviewed
+  code        String   // The actual code submitted
+  language    String   // "javascript", "py", "TS"
+  fileName    String? 
+  
+  // Review status
+  status      String   @default("pending") // pending, in_progress, completed
+  
+  // AI Analysis results
+  summaryAnalysis  String?  // Overall AI summary
+  overallEffortPoints Int? // Estimated points for implementation/fix
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int
+  
+  // Relations
+  user        Staff    @relation(fields: [userId], references: [id])
+  findings    LLMReview[]
+  comments    ReviewComment[]
+}
+
+// Individual issues/findings in a review
+model LLMReview {
+  id            Int      @id @default(autoincrement())
+  reviewId      Int
+  
+  // Finding details
+  category      String   // "security", "performance", "style", "bugs", "documentation"
+  severity      String   // "ASAP", "high", "medium", "low", "info", "book"
+  title         String
+  description   String   // AI-generated explanation
+  
+  // Code location
+  lineNumber    Int?
+  codeSnippet   String?  // The problematic code
+  
+  // Suggestion
+  suggestion    String?  // How to fix it
+  autoFixCode   String?  // Automatic fix if available by local LLM
+  
+  // Status
+  status        String   @default("open") // open, fixed, PP-ned
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  review        CodeReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  comments      ReviewComment[]
+}
+
+// Comments/discussions on findings or reviews
+model ReviewComment {
+  id          Int      @id @default(autoincrement())
+  content     String
+  
+  // Can comment on either a review or a specific finding
+  reviewId    Int?
+  findingId   Int?
+  
+  userId      Int
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user        Staff          @relation(fields: [userId], references: [id])
+  review      CodeReview?    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  finding     LLMReview? @relation(fields: [findingId], references: [id], onDelete: Cascade)
+}
+
+// Model for tracking daily tips shown
+model UserEngagement {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  tipShown    String
+  shownAt     DateTime @default(now())
+  
+  user        Staff    @relation(fields: [userId], references: [id])
 }
