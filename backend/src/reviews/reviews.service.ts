@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { LlmService } from 'src/llm/llm.service';
+import { LlmService } from '../llm/llm.service';
 
 export interface CreateReviewDto {
     title: string;
