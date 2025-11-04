@@ -1,63 +1,108 @@
-# Hackathon Challenge: AI-Powered Code Review Assistant
+# CodeReview - AI-Powered **Code Review Assistant**
 
-## Objective
-Build a functional product capable of performing **automated code reviews**, providing valuable insights and recommendations for developers.
+> An intelligent code review platform that leverages local LLMs to analyze code quality, security, and performance issues in real-time.
 
-Your solution should analyze source code, detect potential issues, and assist in improving code quality.
-Use AI where appropriate — ideally through a **locally hosted Large Language Model (LLM)** to ensure privacy, performance, and innovation.
+Built in ~8 hours for the Haufe 2025 Hackathon.
 
 ---
 
-## Core Requirements
+## Features
 
-| Criteria | Description | Points |
-|-----------|--------------|--------|
-| **Functioning Implementation** | The solution runs successfully and performs basic code review tasks. | **1000** |
-| **Uses Local LLM** | The system performs analysis using a locally hosted LLM. | **5000** |
-
----
-
-## Stretch Goals *(additional points, up to maximum score)*
-
-### Review Intelligence
-| Criteria | Description | Points |
-|-----------|--------------|--------|
-| **Pre-commit Evaluation** | Perform code review before submitting changes (e.g., pre-commit hook or staged review). | 500 |
-| **Incremental Review** | Support reviewing only newly added or changed code segments. | 1000 |
-| **Comment/Reply Handling** | Allow discussion or feedback resolution directly within review comments. | 1000 |
-| **Automatic Fixes** | Provide automatic code fixes or refactoring options based on findings. | 500 |
-| **Effort Estimation** | Estimate the development effort required to apply suggested changes. | 200 |
+- **Local LLM Integration** - Powered by Ollama (CodeLlama 7B) for privacy-first code analysis
+- **Smart Issue Detection** - Automatically identifies security, performance, bugs, style, and documentation issues
+- **Custom Coding Guidelines** - Add team-specific rules and conventions
+- **AI-Powered Suggestions** - Get actionable fix recommendations with code examples
+- **Effort Estimation** - Automatic calculation of time needed to address findings(based on LLM's view)
+- **Multi-Language Support** - JavaScript, TypeScript, Python, Java, Go, Rust, C++
+- **Drag-and-Drop Upload** - Easy file submission with automatic language detection
+- **Clean, Minimalist UI** - Built with Angular + Tailwind CSS
 
 ---
 
-### Review Scope and Quality
-| Criteria | Description | Points |
-|-----------|--------------|--------|
-| **Guideline Awareness** | Incorporate standard coding guidelines (e.g., PEP8, Google Style) in reviews. | 200 |
-| **Guideline Import** | Allow importing or defining custom coding standards or rulesets. | 200 |
-| **Modular Evaluation** | Include multiple dimensions of analysis (e.g., linting, security, architecture, testing, CI/CD). | 200 |
-| **Documentation for Findings** | Generate clear explanations and detailed recommendations for each finding. | 500 |
-| **Suggest Documentation Updates** | Recommend documentation updates relevant to reviewed or changed code. | 200 |
+## Screenshots
+
+### Login
+![Login Page](./media/loginHomepage.png)
+*Auth interface with user-friendly design*
+
+### Dashboard
+![Review Dashboard](./media/reviewDashboard.png)
+*Overview of code reviews with AI analysis summary, issue breakdown, and effort estimation*
+
+### Create Review
+![Add Review Panel](./media/addReviewPanel.png)
+*Submit code via drag-and-drop or paste, with custom coding guidelines support*
+
+### Findings
+![Findings Panel](./media/findingsPanel.png)
+*Detailed findings categorized by severity with suggestions and code fixes*
 
 ---
 
-### Optimization and Cost Awareness
-| Criteria | Description | Points |
-|-----------|--------------|--------|
-| **Performance Optimization** | Efficient execution, fast analysis times, and resource-conscious design. | 500 |
-| **Cost Management** | Implement token or resource usage tracking to control AI-related costs. | 300 |
+## Tech Stack
+
+**Backend:**
+- NestJS
+- Prisma ORM
+- SQLite Database
+- Ollama (Local LLM)
+- JWT Authentication
+
+**Frontend:**
+- Angular
+- TypeScript
+- Tailwind CSS
+- RxJS
 
 ---
 
-### User Experience
-| Criteria | Description | Points |
-|-----------|--------------|--------|
-| **Product Look & Feel** | Intuitive, modern, and visually appealing interface. | 2000 |
-| **Ease of Use** | Smooth workflow, minimal friction for users. | 500 |
-| **Response Quality** | Clear, accurate, and actionable review feedback. | 200 |
+## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Ollama installed with CodeLlama model
+
+### Installation
+
+# Install Ollama model
+ollama pull codellama:7b
+
+# Backend setup
+- `cd backend`
+- `npm install`
+- `npx prisma generate`
+- `npx prisma db push`
+- `npm run start:dev`
+
+# Frontend setup
+- `cd frontend` 
+- `npm install`
+- `ng serve`
 
 ---
 
-## Notes
-- Creativity, technical depth, and practical usability will be key differentiators.
-- Bonus consideration may be given for exceptional innovation, scalability, or clarity of presentation.
+## How It Works
+
+1. **Upload Code** - Paste or drag-and-drop your code file
+2. **Set Guidelines** (Optional) - Add custom coding rules to enforce
+3. **AI Analysis** - Local LLM analyzes the code 
+4. **Review Findings** - Get categorized issues by severity
+5. **Apply Fixes** - Copy suggested code improvements with one click
+
+---
+
+## Hackathon Achievements
+
+- Local LLM integration (Ollama)  
+- Custom coding guidelines enforcement  
+- Effort estimation system  
+- Clean, intuitive UI/UX  
+- File upload with auto-detection  
+- Real-time code analysis  
+- Severity-based filtering  
+
+---
+
+## 👨‍💻 Author
+
+Built with ☕ during Haufe 2025 Hackathon
